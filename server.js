@@ -1,4 +1,4 @@
-require("dotenv").config()//without writing this, u can't use process.env in config file
+require("dotenv").config()//without writing this, u can't use process.env in config folder
 const app = require("./src/app");
 const connnectToDB = require("./src/config/db");
 connnectToDB()

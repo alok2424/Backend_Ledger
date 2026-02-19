@@ -1,12 +1,14 @@
 const userModel = require("../models/user.model")
 const jwt = require("jsonwebtoken");
+const emailService = require('../services/emial.service');
 /**
 * - user register controller
 * - POST /api/auth/register
 */
 async function userRegisterController(req,res){
    const {email,password,name} = req.body
-
+ 
+   //check karenge ki db me already exists karta hai ki nhi
    const isExists = await userModel.findOne({
     email: email
    })
@@ -16,10 +18,11 @@ async function userRegisterController(req,res){
         status:"failed"
     })
    }
+   //create a new user
    const user = await userModel.create({
     email,password,name
    })
-
+  
    const token = jwt.sign({userId:user._id},process.env.JWT_SECRET,{expiresIn:"3d"})//ask for payload and private key
 
    res.cookie("token",token)
@@ -30,6 +33,8 @@ async function userRegisterController(req,res){
         name:user.name
     },token
    })//whenever we add a creating a new resource in the API, if it is due to user request then status code is 201
+
+  await emailService.sendRegistrationEmail(user.email,user.name)//node-mailer 
 }
 
 /**

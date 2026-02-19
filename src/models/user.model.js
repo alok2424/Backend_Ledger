@@ -7,7 +7,7 @@ const userSchema = new mongoose.Schema({
         required:[true,"Email is require for creating a user"],
         trim:true,
         lowercase:true,
-        match:[/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9._]+\.[a-zA-Z]{2,}$/,"Invalid email"],
+        match:[/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9._]+\.[a-zA-Z]{2,}$/,"Invalid email"],//to match format of provided email with actual email, fo rthat we use regex
         unique:[true,"Email already exists"]
     },name:{
           type:String,
@@ -16,11 +16,12 @@ const userSchema = new mongoose.Schema({
         type:String,
         required:[true,"Password is required for creating an account"],
         minlength:[6,"password should coantain more than 6 character"],
-        select:false//in future, jab bhi user ki query mangva rahe honge, to password un query me nhi ayega 
+        select:false//in future, jab bhi user ki query mangva rahe honge, to password un query me nhi ayega jb tak hum explicitly bol na rahe ho ki password bhi le kar ao
     }
 },{
     timestamps:true
 })
+//middleware
 userSchema.pre("save",async function(){
  if(!this.isModified("password")){
     return 
@@ -35,5 +36,6 @@ userSchema.methods.comparePassword= async function(password){
   return bcrypt.compare(password,this.password);//return true or false
 }
 
-const userModel = mongoose.model("user",userSchema)
+const userModel = mongoose.model("user",userSchema)//jis naam se tumne pura , user model create kiya hai and double inverted quote me , jis k liye hai, likes users , admin
+//export jis naam se karoge use naam se , import kar loge kisi bhi file me
 module.exports = userModel
